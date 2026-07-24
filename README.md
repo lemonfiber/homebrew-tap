@@ -5,7 +5,7 @@
   </picture>
 </p>
 
-<h1 align="center">lemonfiber &mdash; homebrew-tap</h1>
+<h1 align="center">Lemonfiber &mdash; homebrew-tap</h1>
 
 <p align="center">Homebrew formulae for lemonfiber.</p>
 
@@ -32,7 +32,7 @@ This repo exists because a Homebrew tap must be a repository named
 `homebrew-<name>` — that requirement is why the org is multi-repo. See spec
 [`30-repos/homebrew-tap.md`](https://github.com/lemonfiber/spec/blob/main/30-repos/homebrew-tap.md).
 
-Note: lemonfiber is licensed Hippocratic 3.0 (not OSI-approved), so it lives in
+Note: Lemonfiber is licensed Hippocratic 3.0 (not OSI-approved), so it lives in
 this tap rather than homebrew-core.
 
 ## Licence

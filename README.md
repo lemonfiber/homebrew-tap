@@ -9,6 +9,10 @@
 
 <p align="center">Homebrew formulae for lemonfiber.</p>
 
+<p align="center">
+  <a href="https://github.com/lemonfiber/homebrew-tap/actions/workflows/ci.yml"><img alt="ci" src="https://github.com/lemonfiber/homebrew-tap/actions/workflows/ci.yml/badge.svg"></a>
+</p>
+
 ---
 
 > **Status: scaffold.** The formula is a placeholder until the first `cli`

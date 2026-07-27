@@ -11,6 +11,7 @@
 
 <p align="center">
   <a href="https://github.com/lemonfiber/homebrew-tap/actions/workflows/ci.yml"><img alt="ci" src="https://github.com/lemonfiber/homebrew-tap/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://scorecard.dev/viewer/?uri=github.com/lemonfiber/homebrew-tap"><img alt="OpenSSF Scorecard" src="https://api.scorecard.dev/projects/github.com/lemonfiber/homebrew-tap/badge"></a>
 </p>
 
 ---

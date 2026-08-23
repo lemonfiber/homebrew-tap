@@ -55,5 +55,5 @@ this tap rather than homebrew-core.
       <img alt="NightWorks.io" src=".github/nightworks-dark.png" height="20">
     </picture>
   </a>
-  &nbsp;&middot;&nbsp;<a href="https://discord.gg/FYuV9CbTHR"><img alt="Discord" src=".github/discord.svg" height="20"></a>
+  &nbsp;&middot;&nbsp;<a href="https://discord.nightworks.io"><img alt="Discord" src=".github/discord.svg" height="20"></a>
 </p>

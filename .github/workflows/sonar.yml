@@ -1,0 +1,17 @@
+# Gate this repo's PRs on zero new SonarCloud issues.
+#
+# The scan is SonarCloud Automatic Analysis against `lemonfiber_homebrew-tap`;
+# there is no scan job here. This reads the summary that analysis posts and
+# enforces the standard the free plan's own quality gate cannot (Q-R64),
+# through the shared reusable in spec so every repo gates identically.
+name: sonar
+on:
+  pull_request:
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  gate:
+    uses: lemonfiber/spec/.github/workflows/sonar-gate.yml@2eada7417e11209ebfa323e7d422b02d727da85e # main
+    secrets:
+      sonar-token: ${{ secrets.SONAR_TOKEN }}

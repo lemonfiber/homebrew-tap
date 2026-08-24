@@ -1,0 +1,29 @@
+# The formula this tap serves, read before it merges.
+#
+# `ci.yml` runs the shared gates — governance, spelling, links, workflow lint,
+# secrets — and not one of them parses Ruby. `Formula/lemonfiber.rb` is what
+# `brew install lemonfiber/tap/lemonfiber` executes, and a formula that cannot
+# load fails for whoever typed that, not here.
+name: formula
+on: [pull_request]
+permissions:
+  contents: read
+
+jobs:
+  formula:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # `brew style` is Homebrew's own RuboCop with the formula cops loaded.
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@a657b8b0cd35d0f65cce41fce9b24cf054b49869 # 2026.08.24.1
+
+      - name: The formula is one brew can load and run
+        run: python3 scripts/check_formula.py
+
+      # A rule nobody has watched fail is a rule nobody knows works.
+      - name: Every rule refuses the formula it exists to refuse
+        run: python3 scripts/check_formula.py --self-test

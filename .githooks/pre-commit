@@ -1,0 +1,27 @@
+#!/bin/sh
+# The fast checks CI runs, before the commit rather than after the push.
+#
+# Fast only: `brew style` needs Homebrew and a formula load, which is a minute
+# somebody would rather spend elsewhere, so it stays in `formula.yml`. A hook
+# that takes a minute is a hook people turn off, and one that is off enforces
+# nothing (OPS-R51, Q-R57).
+#
+# Each check is skipped where its tool is absent, so a contributor without it
+# gets CI’s answer rather than a hook that cannot run.
+
+set -eu
+
+# `ruby -c` is the half of the formula check that costs nothing: the file brew
+# executes has to parse, and a formula that does not is one nobody can install.
+if command -v ruby >/dev/null 2>&1; then
+	for formula in Formula/*.rb; do
+		[ -e "$formula" ] || continue
+		ruby -c "$formula" >/dev/null || exit 1
+	done
+fi
+
+if command -v typos >/dev/null 2>&1; then
+	typos || exit 1
+fi
+
+exit 0

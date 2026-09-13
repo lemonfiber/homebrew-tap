@@ -16,6 +16,9 @@ hooks:
 #
 # The formula this tap serves, read the way CI reads it.
 ci: hooks
+    # First, because a name that does not resolve is a gate that cannot judge
+    # anything, and the Python here is what does the judging.
+    uvx ruff@0.16.4 check scripts/
     python3 scripts/check_formula.py --self-test
     python3 scripts/check_formula.py
     typos

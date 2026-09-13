@@ -17,6 +17,13 @@ jobs:
         with:
           persist-credentials: false
 
+      # This tap carries Python that decides whether the formula merges, and
+      # nothing here read it. `check_shared_files.py` asks a repository's ruff
+      # config to match the shared floor and does not ask a repository with no
+      # config for one, so the gap was invisible from both ends.
+      - name: Lint the scripts
+        run: pipx run ruff==0.16.4 check scripts/
+
       # `brew style` is Homebrew's own RuboCop with the formula cops loaded.
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@f8d4222eb633e65c2a0157383cf80861fc7fae7f # 2026.09.07.1

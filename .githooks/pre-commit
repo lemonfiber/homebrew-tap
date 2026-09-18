@@ -11,6 +11,15 @@
 
 set -eu
 
+# Say what did not run, and why. A check skipped because its tool is absent and a
+# check that found nothing are the same silence otherwise, and the second is what
+# somebody reads the first as — so the hook reports a pass it did not earn.
+say() {
+	printf 'pre-commit: %s\n' "$1" >&2
+}
+
+ran=""
+
 # `ruby -c` is the half of the formula check that costs nothing: the file brew
 # executes has to parse, and a formula that does not is one nobody can install.
 if command -v ruby >/dev/null 2>&1; then
@@ -18,10 +27,19 @@ if command -v ruby >/dev/null 2>&1; then
 		[ -e "$formula" ] || continue
 		ruby -c "$formula" >/dev/null || exit 1
 	done
+	ran="${ran}every formula parses; "
+else
+	say "ruby is not installed, so no formula was parsed here. \`brew style\` and \`ruby -c\` both run in CI."
 fi
 
 if command -v typos >/dev/null 2>&1; then
 	typos || exit 1
+	ran="${ran}no typo; "
+else
+	say "typos is not installed, so nothing was spell-checked here. \`hygiene / typos\` runs in CI. Install it: brew install typos-cli"
 fi
 
+if [ -n "$ran" ]; then
+	say "ran: ${ran%; }"
+fi
 exit 0

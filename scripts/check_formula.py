@@ -40,8 +40,43 @@ VERSION_LINE = re.compile(r'^\s*version\s+"([^"]+)"', re.MULTILINE)
 TEST_BLOCK = re.compile(r"^ {2}test do\n(.*?)^ {2}end$", re.MULTILINE | re.DOTALL)
 
 
+#: What `run` returns when the program it was asked for is not installed. A
+#: sentinel rather than an exception, so a rule can say which of its two answers
+#: it could not give — and so that one missing tool refuses one rule rather than
+#: ending the run on a traceback nobody reads as a verdict.
+ABSENT = -1
+
+
 def run(argv: list[str]) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(argv, capture_output=True, text=True, check=False)
+    """The program, or ABSENT if it is not on PATH.
+
+    Two of the five rules shell out, and neither `ruby` nor `brew` is on every
+    machine that can clone this repository. `subprocess.run` raises
+    `FileNotFoundError` for a missing executable, which arrived as a traceback in
+    the middle of the rule list — a stack ending in `_execute_child` is not a
+    verdict about a formula, and it stopped the three rules after it running at
+    all.
+    """
+    try:
+        return subprocess.run(argv, capture_output=True, text=True, check=False)
+    except FileNotFoundError:
+        return subprocess.CompletedProcess(argv, ABSENT, "", "")
+
+
+def missing(argv: list[str], rule: str, install: str) -> list[str]:
+    """What to say when the tool a rule is is not here.
+
+    A refusal rather than a pass. `brew style` finding nothing to object to and
+    `brew` not being installed are the same green tick otherwise, and the second
+    is a formula nothing read — which is the whole of what this file exists to
+    stop.
+    """
+    return [
+        (f"{argv[0]} is not on PATH, so nothing judged {rule}. This is unproven "
+         f"rather than clean: a formula nobody parsed and a formula with no "
+         f"objection look the same from here. Install it ({install}), or read "
+         f"this rule's verdict from the CI run, where it is")
+    ]
 
 
 def declares(text: str, field: str) -> bool:
@@ -56,15 +91,22 @@ def class_s(stem: str) -> str:
     return re.sub(r"(.)@(\d)", r"\1AT\2", name, count=1)
 
 
-def rule_parses(path: pathlib.Path) -> list[str]:
-    done = run(["ruby", "-c", str(path)])
+def rule_parses(path: pathlib.Path, runner=None) -> list[str]:
+    argv = ["ruby", "-c", str(path)]
+    done = (runner or run)(argv)
+    if done.returncode == ABSENT:
+        return missing(argv, "whether this file is valid Ruby", "`brew install ruby`")
     if done.returncode == 0:
         return []
     return [f"ruby rejects the file: {done.stderr.strip() or done.stdout.strip()}"]
 
 
-def rule_style(path: pathlib.Path) -> list[str]:
-    done = run(["brew", "style", str(path)])
+def rule_style(path: pathlib.Path, runner=None) -> list[str]:
+    argv = ["brew", "style", str(path)]
+    done = (runner or run)(argv)
+    if done.returncode == ABSENT:
+        return missing(argv, "this formula's style",
+                       "https://brew.sh, which this tap is for")
     if done.returncode == 0:
         return []
     return [f"brew style objects: {done.stdout.strip() or done.stderr.strip()}"]
@@ -169,6 +211,42 @@ def written(source: str, into: pathlib.Path) -> pathlib.Path:
     return path
 
 
+#: The two rules that are a program rather than a regex. Named after the rules
+#: themselves so a third one added here cannot be added without an answer for
+#: what it does when its program is missing.
+SHELLS_OUT = {"parses": rule_parses, "style": rule_style}
+
+
+def without_the_tool(good: pathlib.Path) -> list[str]:
+    """Two rules are a program, and neither program is on every machine.
+
+    Driven here because the answer a missing tool used to give was a traceback,
+    and the answer it must never give is the one a clean formula gives. The
+    absence is simulated rather than arranged: hiding `brew` from a real PATH
+    would change what the rest of this run is measuring.
+    """
+    def gone(argv: list[str]) -> subprocess.CompletedProcess[str]:
+        return subprocess.CompletedProcess(argv, ABSENT, "", "")
+
+    found = []
+    for name, rule in SHELLS_OUT.items():
+        objections = rule(good, runner=gone)
+        said = []
+        if not objections:
+            said.append(
+                f"{name} passed a formula it could not read, because the program "
+                f"it is was not installed"
+            )
+        elif "not on PATH" not in objections[0]:
+            said.append(
+                f"{name} refused a missing program without saying that is what "
+                f"happened: {objections[0]}"
+            )
+        report(said, f"{name} refuses a tool that is not here")
+        found.extend(said)
+    return found
+
+
 def self_test() -> int:
     problems: list[str] = []
     with tempfile.TemporaryDirectory() as tmp:
@@ -192,6 +270,8 @@ def self_test() -> int:
                 )
             report(found, f"{name} refuses the formula built to violate it")
             problems.extend(found)
+
+        problems.extend(without_the_tool(good))
 
     for problem in problems:
         print(f"::error::{problem}")

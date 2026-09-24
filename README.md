@@ -40,8 +40,8 @@ installable. Until 1.0.0, use the shell installer attached to each
 holds the scaffold placeholder rather than pipeline output.
 
 This repo exists because a Homebrew tap must be a repository named
-`homebrew-<name>`. That requirement set the floor at two repos; the org has since
-grown to eleven for reasons of its own. See spec
+`homebrew-<name>`. That requirement set the floor at two repos; the org's other
+repositories exist for reasons of their own. See spec
 [`30-repos/homebrew-tap.md`](https://github.com/lemonfiber/spec/blob/main/30-repos/homebrew-tap.md).
 
 Note: Lemonfiber is licensed Hippocratic 3.0 (not OSI-approved), so it lives in

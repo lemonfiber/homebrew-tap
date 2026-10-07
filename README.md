@@ -7,7 +7,7 @@
 
 <h1 align="center">Lemonfiber &mdash; homebrew-tap</h1>
 
-<p align="center">Homebrew formulae for lemonfiber.</p>
+<p align="center">The Homebrew tap for lemonfiber, the tool that sets up and runs a self-hosted media stack.</p>
 
 <p align="center">
   <a href="https://github.com/lemonfiber/homebrew-tap/actions/workflows/ci.yml"><img alt="ci" src="https://github.com/lemonfiber/homebrew-tap/actions/workflows/ci.yml/badge.svg"></a>
@@ -16,36 +16,36 @@
 
 ---
 
-> **Status: placeholder.** `lemonfiber` has been shipping tagged releases since
-> v0.1.0, but none of them wrote this formula — the release pipeline builds the
-> shell installer and the platform archives only. The Homebrew publish job turns
-> on at 1.0.0 (`L1-R3`), once the tap has a `HOMEBREW_TAP_TOKEN`. From then on
-> the formula is written by CI and must not be edited by hand.
+## You cannot install lemonfiber from here yet
 
-## Install
+The formula in this tap is a placeholder. It declares version `0.0.0` and names
+no download, so this command fails:
 
-```
+```sh
 brew install lemonfiber/tap/lemonfiber
 ```
 
-Not yet — the formula is a placeholder, so this resolves to nothing
-installable. Until 1.0.0, use the shell installer attached to each
-[`lemonfiber` release](https://github.com/lemonfiber/lemonfiber/releases).
+No lemonfiber release publishes to this tap. Every release ships a shell
+installer and an archive per platform instead:
+[Install lemonfiber](https://docs.lemonfiber.app/start/install/) explains both.
 
-## How this repo works
+## How this tap works
 
-`Formula/lemonfiber.rb` is written by
-[`lemonfiber`](https://github.com/lemonfiber/lemonfiber)'s release pipeline
-(cargo-dist), never by hand. That publish job is off until 1.0.0, so the file
-holds the scaffold placeholder rather than pipeline output.
+[`Formula/lemonfiber.rb`](Formula/lemonfiber.rb) is not edited by hand:
+lemonfiber's release pipeline owns it. A change to what the formula
+contains is a change to that pipeline, in the
+[`lemonfiber`](https://github.com/lemonfiber/lemonfiber) repository.
 
-This repo exists because a Homebrew tap must be a repository named
-`homebrew-<name>`. That requirement set the floor at two repos; the org's other
-repositories exist for reasons of their own. See spec
-[`30-repos/homebrew-tap.md`](https://github.com/lemonfiber/spec/blob/main/30-repos/homebrew-tap.md).
+lemonfiber is licensed under the Hippocratic License 3.0, which is not
+OSI-approved, so it cannot go into homebrew-core. Homebrew requires a tap to be
+a repository named `homebrew-<name>`, which is why this one exists.
 
-Note: Lemonfiber is licensed Hippocratic 3.0 (not OSI-approved), so it lives in
-this tap rather than homebrew-core.
+## Contributing and security
+
+Read the [contributing guide](https://github.com/lemonfiber/spec/blob/main/50-governance/contributing.md)
+before opening a pull request. Report a vulnerability as the
+[security policy](https://github.com/lemonfiber/.github/blob/main/SECURITY.md)
+describes, not in a public issue.
 
 ## Licence
 

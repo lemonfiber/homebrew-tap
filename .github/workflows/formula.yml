@@ -9,8 +9,61 @@ on: [pull_request]
 permissions:
   contents: read
 
+# A pull request pushed again cancels the run on its old head, which nobody
+# will read and which holds runners the org shares (Q-R75). Every other event
+# is grouped by its own run, so it is never cancelled and never cancels.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
+  # Whether this change reaches anything the formula job reads. The paths
+  # listed are the readme, the agent guides and the licence: neither the
+  # formula check nor ruff reads them. Anything else runs the job, and so does
+  # a file deleted or renamed, or a change with no base to compare against.
+  scope:
+    name: what changed
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      code: ${{ steps.diff.outputs.code }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # Every commit, so the base is here to compare against, and no file
+          # contents but the checkout's: the comparison reads trees.
+          fetch-depth: 0
+          filter: blob:none
+      - id: diff
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          if [ -z "${BASE}" ] || ! git cat-file -e "${BASE}^{commit}" 2>/dev/null; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+            echo "No commit to compare against, so the formula is checked."
+            exit 0
+          fi
+          changed="$(git diff --no-renames --name-status "${BASE}" HEAD)"
+          code=false
+          while IFS=$'\t' read -r status path; do
+            case "${status}:${path}" in
+            : | [AM]:README.md | [AM]:AGENTS.md | [AM]:CLAUDE.md | [AM]:LICENSE) ;;
+            *) code=true ;;
+            esac
+          done <<< "${changed}"
+          echo "code=${code}" >> "$GITHUB_OUTPUT"
+          if [ "${code}" = false ]; then
+            echo "Only files the formula job does not read changed, so it is skipped."
+          fi
+
   formula:
+    needs: scope
+    # Skipped where the change reaches nothing it reads, which reports the
+    # required `formula` as skipped; run wherever `what changed` did not
+    # succeed, so an answer that could not be reached checks the formula.
+    if: ${{ !cancelled() && (needs.scope.result != 'success' || needs.scope.outputs.code == 'true') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

@@ -1,7 +1,12 @@
 # AGENTS.md — homebrew-tap
 
-> **Common rules for every lemonfiber repo are canonical in the spec:**
-> [50-governance/ai-contributors.md](https://github.com/lemonfiber/spec/blob/main/50-governance/ai-contributors.md).
+> **Start at the report** of where every unreleased version stands: the summary
+> of the newest run of the spec's [`state` workflow](https://github.com/lemonfiber/spec/actions/workflows/state.yml),
+> or `just goals <version>` in a spec checkout.
+> **Then the rules every repository shares:**
+> [working in the repositories](https://github.com/lemonfiber/spec/blob/main/50-governance/working-in-the-repositories.md)
+> and [the rules for agents](https://github.com/lemonfiber/spec/blob/main/50-governance/ai-contributors.md).
+> This file holds only what is true of `homebrew-tap`.
 
 ## What this repo is
 

@@ -1,7 +1,11 @@
 # AGENTS.md — homebrew-tap
 
-> **Common rules for every lemonfiber repo are canonical in the spec:**
-> [50-governance/ai-contributors.md](https://github.com/lemonfiber/spec/blob/main/50-governance/ai-contributors.md).
+> **Start at the roadmap and board on [lemonfiber.app](https://lemonfiber.app),
+> rendered from the report of where every unreleased version stands. Then the
+> rules** every repository shares:
+> [working in the repositories](https://github.com/lemonfiber/spec/blob/main/50-governance/working-in-the-repositories.md)
+> and [the rules for agents](https://github.com/lemonfiber/spec/blob/main/50-governance/ai-contributors.md).
+> This file holds only what is true of this repository.
 
 ## What this repo is
 

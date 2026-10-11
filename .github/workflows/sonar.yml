@@ -10,6 +10,10 @@ on:
 permissions:
   contents: read
   pull-requests: write
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   gate:
     uses: lemonfiber/spec/.github/workflows/sonar-gate.yml@4562180c9f974bf03aa9be34610f83bb6eb06029 # v1.0.61

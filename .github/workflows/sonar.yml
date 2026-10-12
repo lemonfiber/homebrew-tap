@@ -16,6 +16,6 @@ concurrency:
 
 jobs:
   gate:
-    uses: lemonfiber/spec/.github/workflows/sonar-gate.yml@c7c9518ba96b3f75119bdf1646577ddeea28dc88 # v1.0.88
+    uses: lemonfiber/spec/.github/workflows/sonar-gate.yml@f368b52cac7510f5903f04d8884a27b3c33d0b11 # v1.0.92
     secrets:
       sonar-token: ${{ secrets.SONAR_TOKEN }}
